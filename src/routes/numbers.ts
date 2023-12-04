@@ -91,48 +91,64 @@ function reverseDigits(n: number): number[] {
 
 type NumberTriplet = number[];
 
-export class Triplet {
+export class IrishNumber {
     value: number;
-    one: number;
-    ten: number;
-    hundred: number;
+    plain: string;
+    counting: string;
+    tens: string;
+    mutation: (s: string) => string;
 
     constructor(n: number) {
         this.value = n;
+        let forms = numberForms[n];
+        this.plain = forms.plain;
+        this.counting = forms.counting;
+        this.tens = forms.tens;
+        this.mutation = forms.mutation;
+    }
+}
 
+export class Triplet {
+    value: number;
+    one: IrishNumber;
+    ten: IrishNumber;
+    hundred: IrishNumber;
+
+    constructor(n: number) {
+        this.value = n;
         let digits = reverseDigits(n);
-        this.one = digits[0] ?? 0;
-        this.ten = digits[1] ?? 0;
-        this.hundred = digits[2] ?? 0;
+        this.one = new IrishNumber(digits[0] ?? 0);
+        this.ten = new IrishNumber(digits[1] ?? 0);
+        this.hundred = new IrishNumber(digits[2] ?? 0);
     }
-
         
-    public isNothing(): boolean {
-        return this.one == 0 && this.ten == 0 && this.hundred == 0;
-    }
-
     public isZero(): boolean {
         return this.value === 0;
     }
 
     public hasTeen(): boolean {
-        return this.ten == 1 && this.one != 0;
+        return this.ten.value == 1 && this.one.value != 0;
     }
 
     public hasMultipleOfTen(): boolean {
-        return this.ten != 0 && this.one == 0;
+        return this.ten.value != 0 && this.one.value == 0;
     }
+
+    public hasMultipleOfHundred(): boolean {
+        return this.hundred.value != 0 && this.ten.value == 0 && this.one.value == 0;
+    }
+
 }
 
 // TODO: at this point I could probably make this into a class and constructor
-function tripletizeNumber(n: number): NumberTriplet[] {
+/*function tripletizeNumber(n: number): NumberTriplet[] {
     let digits = reverseDigits(n);
     let triplets: NumberTriplet[] = [];
     for (let i = 0; i < digits.length; i += 3) {
         triplets.push(digits.slice(i, i + 3));
     }
     return triplets;
-}
+}*/
 
 export function tripletizeNew(n: number): Triplet[] {
     let digits = reverseDigits(n);
@@ -140,12 +156,75 @@ export function tripletizeNew(n: number): Triplet[] {
 
     // This feels like a very messy way of doing things
     for (let i = 0; i < digits.length; i += 3) {
-        triplets.push(new Triplet(Number(digits.slice(i, i + 3).join())));
+        let number = Number(digits.slice(i, i+3).reverse().join(""));
+        console.log("Number: ", number)
+        triplets.push(new Triplet(number));
     }
     return triplets;
 }
 
-function irishForTriplet(n: NumberTriplet, counter?: string): string {
+export function irishForTripletNew(n: Triplet, counter?: string): string {
+    console.log("Irish for triplet new starting, n.value: ", n.value);
+    let text = "";
+    if (n.value == 0) {
+        return "";
+    }
+    console.log("test 2");
+    if (counter) {
+        console.log("Counter is true");
+        if (n.hundred.value) {
+            console.log("n.hundred is true, n.hundred: ", n.hundred);
+            text = n.hundred.counting + " " + n.hundred.mutation("céad")
+            if (n.hasMultipleOfHundred()) {
+                text += ' ' + n.ten.tens + ' ' + counter
+            } else if (n.hasMultipleOfTen()) { // e.g. 110
+                // Including here an exception to change the base form of *a deich* to the counting form of *deich*
+                text += ' is ' + (n.ten.tens === "a deich" ? "deich" : n.ten.tens) + ' ' + counter
+            } else if (n.hasTeen()) { // e.g. 112
+                text += ' is ' + n.one.counting + ' ' + n.one.mutation(counter) + ((counter === 'míle') ? ' dhéag' : ' déag');
+            } else { // e.g. 121
+                console.log("other: ");
+                text += ' ' + n.ten.tens + ' is ' + n.one.counting + ' ' + n.one.mutation(counter)
+            }
+        } else {
+            console.log("n.hundred is not true");
+            if (n.hasTeen()) { // e.g. 13
+                console.log("n.hasTeen");
+                text = n.one.counting + ' ' + n.one.mutation(counter) + ((counter === 'míle') ? ' dhéag' : ' déag');
+                console.log("text: ", text);
+            } else if (n.hasMultipleOfTen()) {
+                // Including here an exception to change the base form of *a deich* to the counting form of *deich*
+                text = (n.ten.tens === "a deich" ? "deich" : n.ten.tens) + ' ' + counter;
+            } else if (n.ten.value) { // e.g. 54
+                text = n.one.counting + ' ' + n.one.mutation(counter) + ' is ' + n.ten.tens;
+            } else {
+                text = n.one.counting + ' ' + n.one.mutation(counter)
+            }
+        }
+    } else {
+        console.log("COunter is not true");
+        text = n.one.plain;
+        if (n.hasTeen()) { // Teens
+            text += (n.one.value === 2) ? ' dhéag' : ' déag';
+        } 
+
+        else if (n.ten.value) { // Multiples of 10
+            console.log("N1: " + n.ten);
+            text = n.ten.tens + ' ' + text;
+        }
+
+        if (n.hundred.value) {
+            console.log("n.hundred: ", n.hundred);
+            text = n.hundred.counting + ' ' + n.hundred.mutation('céad') + ' ' + text;
+            console.log("text", text);
+        }
+    }
+    console.log("test");
+    console.log(text.trim(), 'text')
+    return text.trim();
+}
+
+/* function irishForTriplet(n: NumberTriplet, counter?: string): string {
     let text: string;
     if (counter) {
         text = numberForms[n[0]].counting + ' ' + numberForms[n[0]].mutation(counter)
@@ -195,7 +274,7 @@ function irishForTriplet(n: NumberTriplet, counter?: string): string {
 }
 
 // Currently using Córas na Maoluimhreacha
-export function irishForNumber(n: number, useFlatNumberSystem:boolean=false): string {
+/*export function irishForNumber(n: number, useFlatNumberSystem:boolean=false): string {
     let triplets = tripletizeNumber(n);
     let i = 0;
     let text = '';
@@ -212,6 +291,27 @@ export function irishForNumber(n: number, useFlatNumberSystem:boolean=false): st
             text = irishForTriplet(triplet, POWERS_OF_THOUSAND[i]) + (text.length > 3 ? ', ' : ' ') + text;
             i += 1;
         }
+    }
+
+    return text;
+}*/
+
+export function irishForNumberNew(n: number): string {
+    let triplets = tripletizeNew(n);
+    let i = 0;
+    let text = '';
+    let lastTriplet = new Triplet(0);
+    for (let triplet of triplets) {
+        let combiner = ', ';
+        if (!lastTriplet.value) {
+            combiner = '';
+        } else if ((lastTriplet.value ?? 0) < 20) {
+            console.log("space being used")
+            combiner = ' ';
+        }
+        text = irishForTripletNew(triplet, POWERS_OF_THOUSAND[i]) + combiner + text;
+        lastTriplet = triplet;
+        i += 1;
     }
 
     return text;
