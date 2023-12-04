@@ -32,6 +32,10 @@
     }
 
     function nextNumber() {
+        if (lives <= 0) {
+            hasLost = true;
+        }
+
         target = generateNumber(minNumber, maxNumber);
         userAnswer = "";
         answerResult = "unanswered";
@@ -47,11 +51,6 @@
             answerResult = "incorrect";
             lives -= 1;
         }
-    }
-
-    $: if (lives <= 0) {
-        console.log("You lose");
-        hasLost = true;
     }
 
     reset();
@@ -75,11 +74,7 @@
                 {target}
             </div>
             <input disabled={answerResult !== "unanswered"} class="px-2 py-4 block border" bind:value={userAnswer}/>
-            {#if answerResult === "incorrect"} 
-            <div class="p-1 text-red-600 flex justify-center text-center items-center">
-                {correctAnswer}
-            </div>
-            {/if}
+
             {#if answerResult === "unanswered"}
                 <button on:click={checkAnswer} class="py-4 bg-orange-200">Check</button>
             {:else}
@@ -90,12 +85,18 @@
                     </div>
                 </button>
             {/if}
+            {#if answerResult === "incorrect"} 
+            <div class="p-1 text-red-600 flex justify-center text-center items-center">
+                {correctAnswer}
+            </div>
+            {/if}
         </div>
     {/if}
     <div>
         <h1 class="text-2xl"> Notes </h1>
         <div class=py-2>
-        Numbers are formed based on Córas na mBunuimhreacha, from An Caighdeán Oifigiúil 2017.
+        Numbers are formed based on Córas na mBunuimhreacha, from An Caighdeán Oifigiúil 2017. 
+        You shouldn't capitalise any of the letters, but you should include commas and spaces as appropriate.
         </div>
 
         <h1 class="text-2xl"> Options </h1>
