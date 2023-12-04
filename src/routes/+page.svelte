@@ -12,7 +12,6 @@
             console.log("invalid number");
         }
     }
-    
     showIrishNumber();
 </script>
 
@@ -27,6 +26,9 @@
     </div>
     <div>
         <h1 class="text-2xl"> Notes </h1>
-        Here are some notes about the thing blah blah blah blah blah blah.
+        Numbers are formed based on Córas na mBunuimhreacha, from An Caighdeán Oifigiúil 2017. 
+        Input without commas.
+        I've tested the numbers up to around 1,000,000 and they seem to work, but I can't guarantee that this will work with higher numbers.
+        Source code: <a href=https://github.com/killuaDev/uimhreacha>here</a>
     </div>
 </div>

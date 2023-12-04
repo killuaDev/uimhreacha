@@ -12,7 +12,7 @@ const ECLIPSIS: any = {
     't': 'd'
 };
 
-const POWERS_OF_THOUSAND = ['', 'míle', 'milliún', 'billiún'];
+const POWERS_OF_THOUSAND = ['', 'míle', 'milliún', 'billiún', 'trilliún', 'cuaidrilliún', 'cuintilliún', 'seisilliún'];
 
 export function lenite(s: string): string {
     const firstLetter = s[0];
@@ -137,18 +137,7 @@ export class Triplet {
     public hasMultipleOfHundred(): boolean {
         return this.hundred.value != 0 && this.ten.value == 0 && this.one.value == 0;
     }
-
 }
-
-// TODO: at this point I could probably make this into a class and constructor
-/*function tripletizeNumber(n: number): NumberTriplet[] {
-    let digits = reverseDigits(n);
-    let triplets: NumberTriplet[] = [];
-    for (let i = 0; i < digits.length; i += 3) {
-        triplets.push(digits.slice(i, i + 3));
-    }
-    return triplets;
-}*/
 
 export function tripletizeNew(n: number): Triplet[] {
     let digits = reverseDigits(n);
@@ -223,78 +212,6 @@ export function irishForTripletNew(n: Triplet, counter?: string): string {
     console.log(text.trim(), 'text')
     return text.trim();
 }
-
-/* function irishForTriplet(n: NumberTriplet, counter?: string): string {
-    let text: string;
-    if (counter) {
-        text = numberForms[n[0]].counting + ' ' + numberForms[n[0]].mutation(counter)
-        if (n[0] === 0) { // Multiples of ten
-            if ((!(n[0] && n[1] && n[2]) || n[1] == 1) && counter === "míle") {
-                text = numberForms[n[1]].tens + ' ' + counter;
-                console.log("we're here");
-            } else {
-                text = numberForms[n[1]].tens + ' is ' + counter;
-            }
-        } else {
-            if (n[1] === 1) { // Teens
-                text += (counter === 'míle') ? ' dhéag' : ' déag';
-            } else if (n[1]) { // Above Teens (20+)
-                console.log("n = ", n)
-                if ((!(n[0] && n[1] && n[2]) || n[1] == 1) && counter === "míle") {
-                    text = text + ' is ' + numberForms[n[1]].tens;
-                } else {
-                    text = numberForms[n[1]].tens + ' is ' + text;
-                }
-            }
-    
-            if (n[2]) {
-                if ((!(n[0] && n[1] && n[2]) || n[1] == 1) && counter === "míle") {
-                    text = numberForms[n[2]].counting + ' ' + numberForms[n[2]].mutation('céad') + ' is ' + text;
-                } else {
-                    text = numberForms[n[2]].counting + ' ' + numberForms[n[2]].mutation('céad') + ' ' + text;
-                }
-            }
-        }
-    } else {
-        text = numberForms[n[0]].plain ?? '';
-        if (n[1] === 1 && n[0] !== 0) { // Teens
-            text += (n[0] === 2) ? ' dhéag' : ' déag';
-        } 
-
-        else if (n[1]) { // Multiples of 10
-            console.log("N1: " + n[1]);
-            text = (numberForms[n[1]].tens) + ' ' + text;
-        }
-
-        if (n[2]) {
-            text = numberForms[n[2]].counting + ' ' + numberForms[n[2]].mutation('céad') + ' ' + text;
-        }
-    }
-    return text;
-}
-
-// Currently using Córas na Maoluimhreacha
-/*export function irishForNumber(n: number, useFlatNumberSystem:boolean=false): string {
-    let triplets = tripletizeNumber(n);
-    let i = 0;
-    let text = '';
-
-    if (useFlatNumberSystem) {
-        for (let triplet of triplets) {
-            console.log('TRIPLET: ' + triplet);
-            text = irishForTriplet(triplet) + ' ' + POWERS_OF_THOUSAND[i] + ' ' + text;
-            console.log('TEXT: ' + text);
-            i += 1;
-        }
-    } else {
-        for (let triplet of triplets) {
-            text = irishForTriplet(triplet, POWERS_OF_THOUSAND[i]) + (text.length > 3 ? ', ' : ' ') + text;
-            i += 1;
-        }
-    }
-
-    return text;
-}*/
 
 export function irishForNumberNew(n: number): string {
     let triplets = tripletizeNew(n);
