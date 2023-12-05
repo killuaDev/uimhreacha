@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { irishForNumberNew } from "../numbers";
+    import { irishForNumber } from "../numbers";
     let score: number;
     let lives: number;
     let target: number;
@@ -42,7 +42,7 @@
     }
 
     function checkAnswer() {
-        correctAnswer = irishForNumberNew(target);
+        correctAnswer = irishForNumber(target);
         if (userAnswer === correctAnswer) {
             answerResult = "correct";
             score += 1;

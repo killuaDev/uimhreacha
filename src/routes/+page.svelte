@@ -1,14 +1,13 @@
 <script lang="ts">
-    import {
-        irishForNumberNew
-    } from "./numbers";
+    import { irishForNumber } from "uimhreacha";
     let userNumber = 1;
     let irishNumber = '';
 
     function showIrishNumber() {
         try {
-            irishNumber = irishForNumberNew(userNumber);
-        } catch {
+            irishNumber = irishForNumber(userNumber);
+        } catch (error) {
+            console.log(error)
             console.log("invalid number");
         }
     }
