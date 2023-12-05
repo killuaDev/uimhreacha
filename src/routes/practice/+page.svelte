@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { irishForNumber } from "../numbers";
+    import { irishForNumber } from "uimhreacha";
     let score: number;
     let lives: number;
     let target: number;
